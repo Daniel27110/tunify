@@ -2,21 +2,15 @@
 <html lang="en">
 
 <head>
-
-
-
   <meta charset="utf-8" />
   <title>Tunify</title>
   <script src="https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/alphaTab.js"></script>
   <script src="https://kit.fontawesome.com/b43f0e512e.js"></script>
-
   <!-- Add Bootstrap CSS link -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
 </head>
 
 <body>
-
   <!-- Add Bootstrap top navigation bar -->
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container">
@@ -32,13 +26,10 @@
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="navbar-brand mx-auto">Options</i></a>
           </li>
-
         </ul>
       </div>
     </div>
   </nav>
-
-
 
   <div class="at-wrap">
     <div class="at-overlay">
@@ -72,15 +63,9 @@
         <div class="at-song-position">00:00 / 00:00</div>
       </div>
       <div class="at-controls-right">
-        <a class="btn toggle at-count-in">
-
-        </a>
-        <a class="btn at-metronome">
-
-        </a>
-        <a class="btn at-loop">
-
-        </a>
+        <a class="btn toggle at-count-in"></a>
+        <a class="btn at-metronome"></a>
+        <a class="btn at-loop"></a>
         <a class="btn at-print">
           <i class="fas fa-print"></i>
         </a>
@@ -118,6 +103,13 @@
       </div>
     </div>
   </template>
+
+  <div class="next-note">
+    Next Note: <span id="nextNoteName"></span>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 
   <script type="text/javascript">
     // load elements
@@ -312,6 +304,8 @@
 
       songPosition.innerText =
         formatDuration(e.currentTime) + " / " + formatDuration(e.endTime);
+
+
     });
 
     function findNoteAtPos(x, y) {
@@ -329,6 +323,7 @@
       return null;
     }
 
+
     $(window).on('alphaTab.beatMouseDown', (event, beat) => {
       const containerOffset = $('.at-main').offset();
       if (containerOffset === undefined) {
@@ -337,19 +332,79 @@
       const x = window.event.pageX - containerOffset.left;
       const y = window.event.pageY - containerOffset.top;
       const beatBounds = api.renderer.boundsLookup.findBeat(beat, x, y);
-      const note = findNoteAtPos.bind(beatBounds)(x, y);
+      let note = findNoteAtPos.bind(beatBounds)(x, y);
       if (note) {
-        console.log('note down', note.id);
+
+        const nextNoteName = document.getElementById('nextNoteName');
+        nextNoteName.innerHTML = `Selected Note: ${getNoteOnGuitar(note.string, note.fret)} on string ${note.string} fret ${note.fret}`;
+
       }
-    })
+
+      // console.log('note', note);
+      // console.log('note down', getNoteOnGuitar(note.string, note.fret));
+    });
+
+    function getNoteOnGuitar(string, fret) {
+      const openStringNotes = ["E", "A", "D", "G", "B", "E"];
+      const openStringNote = openStringNotes[string - 1]; // String numbers are 1-based
+      const semitonesPerFret = 1;
+      const noteNames = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+
+      // Find the index of the open string note in the noteNames array
+      const openStringNoteIndex = noteNames.indexOf(openStringNote);
+
+      // Calculate the note at the given fret
+      const noteIndex = (openStringNoteIndex + fret) % 12;
+      const note = noteNames[noteIndex];
+
+      return note;
+    }
+
+    // // asynchronously, without interrupting the UI, fin the next note that will be played using the findNoteAtPos function
+    // // and display it in the next-note div
+    // function findNextNote() {
+    //   setTimeout(() => {
+
+    //     // gets the position of the beat cursor, with the scroll element offset
+    //     ///  scrollElement: wrapper.querySelector
+    //     let position_x = api.settings.player.scrollElement.scrollLeft;
+    //     console.log('x', position_x);
+    //     let note = findNoteAtPos2.bind(api.renderer.boundsLookup)(position_x);
+    //     if (note) {
+
+    //       console.log('ote down', getNoteOnGuitar(note.string, note.fret), 'on string', note.string, 'fret', note.fret);
+    //       console.log('note', note);
+
+    //     }
+    //   }, 1);
+    // }
+
+    // function findNoteAtPos2(x) {
+    //   if (!this.notes) {
+    //     return null;
+    //   }
+    //   for (let note of this.notes) {
+    //     let bottom = note.noteHeadBounds.y + note.noteHeadBounds.h;
+    //     let right = note.noteHeadBounds.x + note.noteHeadBounds.w;
+    //     // Here is the fix
+    //     if (note.noteHeadBounds.x <= x && note.noteHeadBounds.y <= y && x <= right && y <= bottom) {
+    //       return note.note;
+    //     }
+    //   }
+    //   return null;
+    // }
+
+    // api.playerPositionChanged.on((e) => {
+    //   // Find the next note
+    //   findNextNote();
+    // });
+
+
 
 
 
 
   </script>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
