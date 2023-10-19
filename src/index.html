@@ -105,7 +105,20 @@
   </template>
 
   <div class="next-note">
-    Next Note: <span id="nextNoteName"></span>
+    PLEASE CLICK ON THE BOTTOM OF THE FIRST NOTE OR NOTHING WILL WORK :)
+  </div>
+
+
+  <div class="next-note">
+    <span id="warning"></span>
+  </div>
+
+  <div class="next-note">
+    <span id="currentNotePosition"></span>
+  </div>
+
+  <div class="next-note">
+    The next Note is <span id="NextNotePosition"></span>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -296,6 +309,7 @@
     const songPosition = wrapper.querySelector(".at-song-position");
     let previousTime = -1;
     api.playerPositionChanged.on((e) => {
+      findNextNote();
       // reduce number of UI updates to second changes.
       const currentSeconds = (e.currentTime / 1000) | 0;
       if (currentSeconds == previousTime) {
@@ -307,6 +321,9 @@
 
 
     });
+
+
+
 
     function findNoteAtPos(x, y) {
       if (!this.notes) {
@@ -320,9 +337,11 @@
           return note.note;
         }
       }
+
       return null;
     }
 
+    let nextBeat = null;
 
     $(window).on('alphaTab.beatMouseDown', (event, beat) => {
       const containerOffset = $('.at-main').offset();
@@ -335,9 +354,9 @@
       let note = findNoteAtPos.bind(beatBounds)(x, y);
       if (note) {
 
-        const nextNoteName = document.getElementById('nextNoteName');
-        nextNoteName.innerHTML = `Selected Note: ${getNoteOnGuitar(note.string, note.fret)} on string ${note.string} fret ${note.fret}`;
-
+        const nextNoteName = document.getElementById('warning');
+        nextNoteName.innerHTML = 'First Note was clicked! Now click play';
+        nextBeat = beat;
       }
 
       // console.log('note', note);
@@ -360,44 +379,71 @@
       return note;
     }
 
-    // // asynchronously, without interrupting the UI, fin the next note that will be played using the findNoteAtPos function
-    // // and display it in the next-note div
-    // function findNextNote() {
-    //   setTimeout(() => {
 
-    //     // gets the position of the beat cursor, with the scroll element offset
-    //     ///  scrollElement: wrapper.querySelector
-    //     let position_x = api.settings.player.scrollElement.scrollLeft;
-    //     console.log('x', position_x);
-    //     let note = findNoteAtPos2.bind(api.renderer.boundsLookup)(position_x);
-    //     if (note) {
 
-    //       console.log('ote down', getNoteOnGuitar(note.string, note.fret), 'on string', note.string, 'fret', note.fret);
-    //       console.log('note', note);
+    async function findNextNote() {
+      // get the x position of the beat cursor, it has the html element class "at-beat-cursor"
+      const beatCursor = document.querySelector('.at-cursor-beat');
+      const beatCursorRect = beatCursor.getBoundingClientRect();
+      const position_x = beatCursorRect.x;
 
-    //     }
-    //   }, 1);
-    // }
+      // gets the window container offset
+      const containerOffset = $('.at-main').offset();
+      if (containerOffset === undefined) {
+        return;
+      }
+      const nextNoteName = document.getElementById('currentNotePosition');
+      nextNoteName.innerHTML = 'The beat cursor is at position ' + (position_x - containerOffset.left) + 'px';
 
-    // function findNoteAtPos2(x) {
-    //   if (!this.notes) {
-    //     return null;
-    //   }
-    //   for (let note of this.notes) {
-    //     let bottom = note.noteHeadBounds.y + note.noteHeadBounds.h;
-    //     let right = note.noteHeadBounds.x + note.noteHeadBounds.w;
-    //     // Here is the fix
-    //     if (note.noteHeadBounds.x <= x && note.noteHeadBounds.y <= y && x <= right && y <= bottom) {
-    //       return note.note;
-    //     }
-    //   }
-    //   return null;
-    // }
+      // gets the variable nextNote, if it's null, return
+      if (nextBeat === null) {
+        return;
+      }
 
-    // api.playerPositionChanged.on((e) => {
-    //   // Find the next note
-    //   findNextNote();
-    // });
+      // Hopefully finds the next note
+      findNextNoteFromBeat(nextBeat, position_x - containerOffset.left);
+
+    }
+
+    function findNextNoteFromBeat(beat, pos_x) {
+      const beatBounds = api.renderer.boundsLookup.findBeat(beat, pos_x, 0);
+      let note = findNoteAtPos_x.bind(beatBounds)(pos_x);
+      if (note) {
+        if (nextBeat.nextBeat != null) {
+          nextBeat = nextBeat.nextBeat;
+          const nextNoteName = document.getElementById('NextNotePosition');
+          nextNoteName.innerHTML = `${getNoteOnGuitar(note.string, note.fret)} on string ${note.string} fret ${note.fret}`;
+
+        } else {
+          const nextNoteName = document.getElementById('NextNotePosition');
+          nextNoteName.innerHTML = 'No more notes left';
+
+
+        }
+      }
+
+
+    }
+
+    function findNoteAtPos_x(x) {
+      if (!this.notes) {
+        return null;
+      }
+      for (let note of this.notes) {
+        let right = note.noteHeadBounds.x + note.noteHeadBounds.w;
+        // Here is the fix
+        if (note.noteHeadBounds.x <= x && x <= right) {
+          return note.note;
+        }
+      }
+
+      return null;
+    }
+
+    const nextNoteName = document.getElementById('warning');
+    nextNoteName.innerHTML = 'First Note has not been clicked!'
+    // api.settings.player.enableAnimatedBeatCursor = false;
+
 
 
 
