@@ -2,21 +2,15 @@
 <html lang="en">
 
 <head>
-
-
-
   <meta charset="utf-8" />
   <title>Tunify</title>
   <script src="https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/alphaTab.js"></script>
   <script src="https://kit.fontawesome.com/b43f0e512e.js"></script>
-
   <!-- Add Bootstrap CSS link -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
 </head>
 
 <body>
-
   <!-- Add Bootstrap top navigation bar -->
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <div class="container">
@@ -32,13 +26,10 @@
           <li class="nav-item">
             <a class="nav-link" href="#"><i class="navbar-brand mx-auto">Options</i></a>
           </li>
-
         </ul>
       </div>
     </div>
   </nav>
-
-
 
   <div class="at-wrap">
     <div class="at-overlay">
@@ -72,15 +63,9 @@
         <div class="at-song-position">00:00 / 00:00</div>
       </div>
       <div class="at-controls-right">
-        <a class="btn toggle at-count-in">
-
-        </a>
-        <a class="btn at-metronome">
-
-        </a>
-        <a class="btn at-loop">
-
-        </a>
+        <a class="btn toggle at-count-in"></a>
+        <a class="btn at-metronome"></a>
+        <a class="btn at-loop"></a>
         <a class="btn at-print">
           <i class="fas fa-print"></i>
         </a>
@@ -121,6 +106,33 @@
       </div>
     </div>
   </template>
+
+  <div class="next-note">
+    PLEASE CLICK ON THE BOTTOM OF THE FIRST NOTE OR NOTHING WILL WORK :)
+  </div>
+
+
+  <div class="next-note">
+    <span id="warning"></span>
+  </div>
+
+  <div class="next-note">
+    <span id="currentNotePosition"></span>
+  </div>
+
+  <div class="next-note">
+    The next Note is <span id="NextNotePosition"></span>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 
   <script type="text/javascript">
     // load elements
@@ -307,6 +319,7 @@
     const songPosition = wrapper.querySelector(".at-song-position");
     let previousTime = -1;
     api.playerPositionChanged.on((e) => {
+      findNextNote();
       // reduce number of UI updates to second changes.
       const currentSeconds = (e.currentTime / 1000) | 0;
       if (currentSeconds == previousTime) {
@@ -315,7 +328,12 @@
 
       songPosition.innerText =
         formatDuration(e.currentTime) + " / " + formatDuration(e.endTime);
+
+
     });
+
+
+
 
     function findNoteAtPos(x, y) {
       if (!this.notes) {
@@ -329,8 +347,11 @@
           return note.note;
         }
       }
+
       return null;
     }
+
+    let nextBeat = null;
 
     $(window).on('alphaTab.beatMouseDown', (event, beat) => {
       const containerOffset = $('.at-main').offset();
@@ -340,18 +361,103 @@
       const x = window.event.pageX - containerOffset.left;
       const y = window.event.pageY - containerOffset.top;
       const beatBounds = api.renderer.boundsLookup.findBeat(beat, x, y);
-      const note = findNoteAtPos.bind(beatBounds)(x, y);
+      let note = findNoteAtPos.bind(beatBounds)(x, y);
       if (note) {
-        console.log('note down', note.id);
+
+        const nextNoteName = document.getElementById('warning');
+        nextNoteName.innerHTML = 'First Note was clicked! Now click play';
+        nextBeat = beat;
       }
-    })
+    })  
+
+    function getNoteOnGuitar(string, fret) {
+      const openStringNotes = ["E", "A", "D", "G", "B", "E"];
+      const openStringNote = openStringNotes[string - 1]; // String numbers are 1-based
+      const semitonesPerFret = 1;
+      const noteNames = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+
+      // Find the index of the open string note in the noteNames array
+      const openStringNoteIndex = noteNames.indexOf(openStringNote);
+
+      // Calculate the note at the given fret
+      const noteIndex = (openStringNoteIndex + fret) % 12;
+      const note = noteNames[noteIndex];
+
+      return note;
+    }
+
+
+
+    async function findNextNote() {
+      // get the x position of the beat cursor, it has the html element class "at-beat-cursor"
+      const beatCursor = document.querySelector('.at-cursor-beat');
+      const beatCursorRect = beatCursor.getBoundingClientRect();
+      const position_x = beatCursorRect.x;
+
+      // gets the window container offset
+      const containerOffset = $('.at-main').offset();
+      if (containerOffset === undefined) {
+        return;
+      }
+      const nextNoteName = document.getElementById('currentNotePosition');
+      nextNoteName.innerHTML = 'The beat cursor is at position ' + (position_x - containerOffset.left) + 'px';
+
+      // gets the variable nextNote, if it's null, return
+      if (nextBeat === null) {
+        return;
+      }
+
+      // Hopefully finds the next note
+      findNextNoteFromBeat(nextBeat, position_x - containerOffset.left);
+
+    }
+
+    function findNextNoteFromBeat(beat, pos_x) {
+      const beatBounds = api.renderer.boundsLookup.findBeat(beat, pos_x, 0);
+      let note = findNoteAtPos_x.bind(beatBounds)(pos_x);
+      if (note) {
+        if (nextBeat.nextBeat != null) {
+          nextBeat = nextBeat.nextBeat;
+          const nextNoteName = document.getElementById('NextNotePosition');
+          nextNoteName.innerHTML = `${getNoteOnGuitar(note.string, note.fret)} on string ${note.string} fret ${note.fret}`;
+
+        } else {
+          const nextNoteName = document.getElementById('NextNotePosition');
+          nextNoteName.innerHTML = 'No more notes left';
+
+
+        }
+      }
+
+
+    }
+
+    function findNoteAtPos_x(x) {
+      if (!this.notes) {
+        return null;
+      }
+      for (let note of this.notes) {
+        let right = note.noteHeadBounds.x + note.noteHeadBounds.w;
+        // Here is the fix
+        if (note.noteHeadBounds.x <= x && x <= right) {
+          return note.note;
+        }
+      }
+
+      return null;
+    }
+
+    const nextNoteName = document.getElementById('warning');
+    nextNoteName.innerHTML = 'First Note has not been clicked!'
+    // api.settings.player.enableAnimatedBeatCursor = false;
+
+
+
+
+
+
+
   </script>
-  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js" type="text/javascript"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
