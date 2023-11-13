@@ -9,7 +9,7 @@
 var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 // Variables for audio processing
-let recorder, mic, soundFile, fft, audioContext, amplitude;
+let mic, soundFile, fft, audioContext, amplitude;
 
 // URL of the machine learning model used to detect pitch
 const model_url = 'https://cdn.jsdelivr.net/gh/ml5js/ml5-data-and-models/models/pitch-detection/crepe/';
@@ -38,7 +38,7 @@ function modelLoaded() {
 }
 
 // Recursive function that uses the machine learning model to detect the pitch of the audio input stream
-function getPitch() {
+function getPitch() { 
   pitch.getPitch(function(err, frequency) {
     if (frequency && parseFloat(pitch.results.confidence) > 0.825) {
       console.log(pitch.results.confidence);
@@ -64,10 +64,12 @@ function sleep(ms) {
 }
 
 function comparePitch(){
-  if (currentNote == nextNote){
-    console.log("Correct");
+    if (currentNote == nextNote){
+      console.log("Correct");
+      api.play();
+    }
+    else{
+      console.log("Incorrect");
+      
+    }
   }
-  else{
-    console.log("Incorrect");
-  }
-}

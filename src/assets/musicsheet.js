@@ -250,12 +250,10 @@ function getNoteOnGuitar(string, fret) {
   const note = noteNames[noteIndex];
 
   // Calculate the octave number
-  const octave = Math.floor((openStringNoteIndex + fret) / 12) + 1;
+  const octave = Math.floor((openStringNoteIndex + fret) / 12)+2;
   nextNote = note + octave;
   return note + octave;
 }
-
-
 
 async function findNextNote() {
   // get the x position of the beat cursor, it has the html element class "at-beat-cursor"
@@ -289,6 +287,7 @@ function findNextNoteFromBeat(beat, pos_x) {
       nextBeat = nextBeat.nextBeat;
       const nextNoteName = document.getElementById('NextNotePosition');
       nextNoteName.innerHTML = `${getNoteOnGuitar(note.string, note.fret)} on string ${note.string} fret ${note.fret}`;
+      api.pause();
 
     } else {
       const nextNoteName = document.getElementById('NextNotePosition');
