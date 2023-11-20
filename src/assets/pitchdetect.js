@@ -63,13 +63,20 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function comparePitch(){
-    if (currentNote == nextNote){
-      console.log("Correct");
-      api.play();
-    }
-    else{
-      console.log("Incorrect");
-      
-    }
+function comparePitch() {
+  if (currentNote == currentNotes[pos] && !paused) {
+      pos++;
+      if (pos == currentNotes.length) {
+          pos = 0;
+      }
+      noteImages.forEach((image, index) => {
+          if (index <= pos) {
+              image.style.opacity = "1";
+              tabImages[index].style.opacity = "1";
+          } else {
+              image.style.opacity = "0.5";
+              tabImages[index].style.opacity = "0.5";
+          }
+      });
   }
+}

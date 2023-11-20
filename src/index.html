@@ -2,139 +2,71 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <title>Tunify</title>
-  <script src="https://cdn.jsdelivr.net/npm/@coderline/alphatab@latest/dist/alphaTab.js"></script>
-  <script src="https://kit.fontawesome.com/b43f0e512e.js"></script>
-  <!-- Add Bootstrap CSS link -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta charset="utf-8" />
+    <title>Tunify</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add custom CSS link -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <!-- Add Bootstrap top navigation bar -->
-  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-    <div class="container">
-      <a class="navbar-brand mx-auto" href="#">Tunify</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="navbar-brand mx-auto">Donate</i></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="navbar-brand mx-auto">Options</i></a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <div class="at-wrap">
-    <div class="at-overlay">
-      <div class="at-overlay-content">
-        Music sheet is loading
-      </div>
-    </div>
-    <div class="at-content">
-      <div class="at-sidebar">
-        <div class="at-sidebar-content">
-          <div class="at-track-list"></div>
+    <!-- Add Bootstrap top navigation bar -->
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <div class="container">
+            <a class="navbar-brand mx-auto" href="#">Tunify</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="navbar-brand mx-auto">Donate</i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="navbar-brand mx-auto">Options</i></a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
-      <div class="at-viewport">
-        <div class="at-main"></div>
-      </div>
+    </nav>
+
+    <div class="image-container d-flex justify-content-center align-items-center">
+        <img src="music/Gclef2.png" alt="Gclef" width="75" height="250">
+        <img src="music/blank.png" alt="note1" width="75" height="250" class="note1">
+        <img src="music/blank.png" alt="note2" width="75" height="250" class="note2">
+        <img src="music/blank.png" alt="note3" width="75" height="250" class="note3">
+        <img src="music/blank.png" alt="note4" width="75" height="250" class="note4">
+        <img src="music/blank.png" alt="note5" width="75" height="250" class="note5">
+        <img src="music/blank.png" alt="note6" width="75" height="250" class="note6">
+        <img src="music/blank.png" alt="note7" width="75" height="250" class="note7">
+        <img src="music/blank.png" alt="note8" width="75" height="250" class="note8">
+        <img src="music/fin.png" alt="fin" width="75" height="250">
     </div>
-    <div class="at-controls">
-      <div class="at-controls-left">
-        <a class="btn at-player-stop disabled">
-          <i class="fas fa-step-backward"></i>
-        </a>
-        <a class="btn at-player-play-pause disabled">
-          <i class="fas fa-play"></i>
-        </a>
-        <span class="at-player-progress">0%</span>
-        <div class="at-song-info">
-          <span class="at-song-title"></span> -
-          <span class="at-song-artist"></span>
-        </div>
-        <div class="at-song-position">00:00 / 00:00</div>
-      </div>
-      <div class="at-controls-right">
-        <a class="btn toggle at-count-in"></a>
-        <a class="btn at-metronome"></a>
-        <a class="btn at-loop"></a>
-        <a class="btn at-print">
-          <i class="fas fa-print"></i>
-        </a>
-        <div class="at-zoom">
-          <i class="fas fa-search"></i>
-          <select>
-            <option value="25">25%</option>
-            <option value="50">50%</option>
-            <option value="75">75%</option>
-            <option value="90">90%</option>
-            <option value="100" selected>100%</option>
-            <option value="110">110%</option>
-            <option value="125">125%</option>
-            <option value="150">150%</option>
-            <option value="200">200%</option>
-          </select>
-        </div>
-        <div>
-          <button onclick="retrieveAudio();">Start</button>
-        </div>
-        <div class="at-layout">
-          <select>
-            <option value="horizontal" selected>Horizontal</option>
-            <option value="page">Page</option>
-          </select>
-        </div>
-      </div>
+
+    <div class="image-container d-flex justify-content-center align-items-center">
+        <img src="music/TAB.png" alt="Gclef" width="75" height="250">
+        <img src="music/blankTAB.png" alt="note1" width="75" height="250" class="tab1">
+        <img src="music/blankTAB.png" alt="note2" width="75" height="250" class="tab2">
+        <img src="music/blankTAB.png" alt="note3" width="75" height="250" class="tab3">
+        <img src="music/blankTAB.png" alt="note4" width="75" height="250" class="tab4">
+        <img src="music/blankTAB.png" alt="note5" width="75" height="250" class="tab5">
+        <img src="music/blankTAB.png" alt="note6" width="75" height="250" class="tab6">
+        <img src="music/blankTAB.png" alt="note7" width="75" height="250" class="tab7">
+        <img src="music/blankTAB.png" alt="note8" width="75" height="250" class="tab8">
+        <img src="music/tabFIN.png" alt="fin" width="75" height="250">
     </div>
-  </div>
 
-  <template id="at-track-template">
-    <div class="at-track">
-      <div class="at-track-icon">
-        <i class="fas fa-guitar"></i>
-      </div>
-      <div class="at-track-details">
-        <div class="at-track-name"></div>
-      </div>
-    </div>
-  </template>
+    <button class="btn btn-primary mt-3 mx-auto d-block start-button">Start</button>
 
-  <div class="next-note">
-    PLEASE CLICK ON THE BOTTOM OF THE FIRST NOTE OR NOTHING WILL WORK :)
-  </div>
-
-
-  <div class="next-note">
-    <span id="warning"></span>
-  </div>
-
-  <div class="next-note">
-    <span id="currentNotePosition"></span>
-  </div>
-
-  <div class="next-note">
-    The next Note is <span id="NextNotePosition"></span>
-  </div>
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js" type="text/javascript"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.js"></script>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="assets/musicsheet.js"></script>
-  <script src="assets/pitchdetect.js"></script>
-  <script src="assets/hacerAlgo.js"></script>
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="assets/pitchdetect.js"></script>
+    <script src="assets/musicsheet.js"></script>
+    
 </body>
-
 </html>
